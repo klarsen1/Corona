@@ -1,52 +1,11 @@
 library(tidyverse)
 library(readr)
 
-cutoff <- Sys.Date()
+setwd("/Users/kim.larsen/Documents/Code/Corona")
 
-read_corona <- function(file, variable){
-  f <- file
-  d <- read_csv(f) %>%
-     pivot_longer(cols = matches("1|2|3|4|5|6|7|8|9"), names_to = "date", values_to = variable) %>%
-     rename(country_region=`Country/Region`, lat=Lat, lon=Long, province_state=`Province/State`) %>%
-     mutate(date=as.Date(date, "%m/%d/%y"), 
-            province_state=ifelse(province_state=="", "NA", province_state))
-  return(d)
-}
+source("functions.R")
 
-confirmed <- read_corona("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv", "confirmed_cases")
-deaths <- read_corona("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv", "deaths")
-recovered <- read_corona("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv", "recovered")
+charts("Denmark", "2020-03-10")
 
-corona <- 
-  left_join(confirmed, deaths, by=c("country_region", "province_state", "date", "lat", "lon")) %>%
-  left_join(recovered, by=c("country_region", "province_state", "date", "lat", "lon")) %>%
-  filter(date<=cutoff) %>%
-  replace(is.na(.), 0) %>%
-  arrange(country_region, province_state) %>%
-  group_by(country_region, province_state) %>%
-  mutate(row=row_number(), 
-         new_confirmed_cases=ifelse(row>1, confirmed_cases-lag(confirmed_cases), confirmed_cases),  
-         new_deaths=ifelse(row>1, deaths-lag(deaths), deaths),
-         new_recoveries=ifelse(row>1, recovered-lag(recovered), recovered)) %>%
-  ungroup()
 
-us <- 
-  corona %>%
-  group_by(country_region, date) %>% 
-  summarise_at(vars(new_confirmed_cases, new_deaths, new_recoveries), funs(sum)) %>% 
-  mutate(new_case_growth_rate=new_confirmed_cases/lag(new_confirmed_cases)-1) %>%
-  filter(country_region=="US" & date >= as.Date("2020-03-01"))
-
-ggplot(us, aes(x=date, y=new_confirmed_cases)) + 
-  geom_line() + 
-  scale_x_date(date_breaks = "1 day") + 
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  scale_y_continuous(labels = scales::comma) +
-  xlab("Date") + ylab("New Confirmed Cases")
-
-ggplot(us, aes(x=date, y=new_case_growth_rate)) + 
-  geom_line() + 
-  scale_x_date(date_breaks = "1 day") + 
-  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
-  scale_y_continuous(labels = scales::percent) +
-  xlab("Date") + ylab("New Confirmed Case Growth Rate")
+charts(NULL, "2020-03-10")
