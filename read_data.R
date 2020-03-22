@@ -31,10 +31,28 @@ corona <-
          new_confirmed_cases=ifelse(row>1, confirmed_cases-lag(confirmed_cases), confirmed_cases),  
          new_deaths=ifelse(row>1, deaths-lag(deaths), deaths),
          new_recoveries=ifelse(row>1, recovered-lag(recovered), recovered), 
-         cumulative_new_cases=cumsum(new_confirmed_cases), 
+         cumulative_cases=cumsum(new_confirmed_cases), 
+         cumulative_deaths=cumsum(new_deaths), 
          new_confirmed_cases_scaled=new_confirmed_cases*population_scalar,
          new_deaths_scaled=new_deaths*population_scalar,
-         cumulative_new_cases_scaled=cumulative_new_cases*population_scalar) %>%
+         cumulative_cases_scaled=cumulative_cases*population_scalar, 
+         cumulative_deaths_scaled=cumulative_deaths*population_scalar) %>%
   ungroup()
 
 saveRDS(corona,"corona.rda")
+
+corona_country_cohorts <- 
+  filter(corona, is.na(population_scalar)==FALSE) %>%
+  group_by(country_region, date) %>%
+  summarise_at(
+    vars(new_confirmed_cases, new_deaths, new_recoveries, confirmed_cases, cumulative_cases, cumulative_deaths, new_confirmed_cases_scaled, new_deaths_scaled, cumulative_cases_scaled, cumulative_deaths_scaled), 
+    funs(sum)) %>%
+  group_by(country_region) %>%
+  mutate(cohort_index_first_death=dense_rank(cumulative_deaths)-1,
+         cohort_index_first_case=dense_rank(cumulative_cases)-1)
+  
+saveRDS(corona_country_cohorts,"corona_country_cohorts.rda")  
+
+
+  
+

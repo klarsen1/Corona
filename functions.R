@@ -6,13 +6,13 @@ charts <- function(country_region_filter, min_date){
      
      if (is.null(country_region_filter)==FALSE){
        dd <- group_by(df, country_region, date) %>% 
-             summarise_at(vars(new_confirmed_cases, new_deaths, new_recoveries, confirmed_cases, cumulative_new_cases), funs(sum)) %>% 
+             summarise_at(vars(new_confirmed_cases, new_deaths, new_recoveries, confirmed_cases, cumulative_cases), funs(sum)) %>% 
              mutate(new_case_growth_rate=new_confirmed_cases/lag(new_confirmed_cases)-1, 
                    new_deaths_growth_rate=new_deaths/lag(new_deaths)-1) %>%
              filter(date >= as.Date(min_date) & country_region==country_region_filter)
      } else{
        dd <- group_by(df, date) %>% 
-             summarise_at(vars(new_confirmed_cases, new_deaths, new_recoveries, confirmed_cases, cumulative_new_cases), funs(sum)) %>% 
+             summarise_at(vars(new_confirmed_cases, new_deaths, new_recoveries, confirmed_cases, cumulative_cases), funs(sum)) %>% 
              mutate(new_case_growth_rate=new_confirmed_cases/lag(new_confirmed_cases)-1, 
                     new_deaths_growth_rate=new_deaths/lag(new_deaths)-1) %>%
             filter(date >= as.Date(min_date))
