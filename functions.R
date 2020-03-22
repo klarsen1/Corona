@@ -48,7 +48,7 @@ charts <- function(country_region_filter=NULL, province_state_filter=NULL, min_d
       geom_text(aes(label=paste0(round(new_deaths_growth_rate*100,1), "%")), position=position_dodge(width=0.9), vjust=-0.25, size=3)
     
    g4 <- ggplot(dd, aes(x=date, y=new_deaths)) + 
-     geom_bar(stat="identity") + 
+      geom_bar(stat="identity") + 
       scale_x_date(date_breaks = "1 day") + 
       theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
       scale_y_continuous(labels = scales::comma) +
@@ -57,6 +57,7 @@ charts <- function(country_region_filter=NULL, province_state_filter=NULL, min_d
 
    g5<- ggplot(dd, aes(x=date, y=cumulative_cases)) + 
      geom_bar(stat="identity") + 
+     geom_smooth() +
      scale_x_date(date_breaks = "1 day") + 
      theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
      scale_y_continuous(labels = scales::comma) +
@@ -65,6 +66,7 @@ charts <- function(country_region_filter=NULL, province_state_filter=NULL, min_d
 
    g6<- ggplot(dd, aes(x=date, y=cumulative_deaths)) + 
      geom_bar(stat="identity") + 
+     geom_smooth() +
      scale_x_date(date_breaks = "1 day") + 
      theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
      scale_y_continuous(labels = scales::comma) +
