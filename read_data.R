@@ -53,6 +53,53 @@ corona_country_cohorts <-
   
 saveRDS(corona_country_cohorts,"corona_country_cohorts.rda")  
 
+check <- function(){
+   total <- sum(filter(corona, date==Sys.Date()-1)$confirmed_cases)
+   ex_china <- sum(filter(corona, date==Sys.Date()-1 & country_region!="China")$confirmed_cases)
+   us <- sum(filter(corona, date==Sys.Date()-1 & country_region=="US")$confirmed_cases)
+   cat("Total Worldwide Cases as of", as.character(Sys.Date()-1), "= ", format(total, big.mark = ",")) 
+   cat("\n")
+   cat("Total Worldwide Cases (excl China) as of", as.character(Sys.Date()-1), "= ", format(ex_china, big.mark = ",")) 
+   cat("\n")
+   cat("Total US Cases as of", as.character(Sys.Date()-1), "= ", format(us, big.mark = ",")) 
+   cat("\n")
+   cat("\n")
+   
+   new <- sum(filter(corona, date==Sys.Date()-1)$new_confirmed_cases) 
+   new_ex_china <- sum(filter(corona, date==Sys.Date()-1 & country_region!="China")$new_confirmed_cases)
+   new_us <- sum(filter(corona, date==Sys.Date()-1 & country_region=="US")$new_confirmed_cases)
+   cat("New Worldwide Cases on", as.character(Sys.Date()-1), "= ", format(new, big.mark = ",")) 
+   cat("\n")
+   cat("New Worldwide Cases (excl China) on", as.character(Sys.Date()-1), "= ", format(new_ex_china, big.mark = ",")) 
+   cat("\n")
+   cat("New US Cases on", as.character(Sys.Date()-1), "= ", format(new_us, big.mark = ",")) 
+   cat("\n")
+   cat("Check new case calculations: ", sum(corona$new_confirmed_cases)==total)
+   cat("\n")
+   cat("\n")
+   
+   total <- sum(filter(corona, date==Sys.Date()-1)$deaths)
+   ex_china <- sum(filter(corona, date==Sys.Date()-1 & country_region!="China")$deaths)
+   us <- sum(filter(corona, date==Sys.Date()-1 & country_region=="US")$deaths)
+   cat("Total Worldwide Deaths as of", as.character(Sys.Date()-1), "= ", format(total, big.mark = ",")) 
+   cat("\n")
+   cat("Total Worldwide Deaths (excl China) as of", as.character(Sys.Date()-1), "= ", format(ex_china, big.mark = ",")) 
+   cat("\n")
+   cat("Total US Deaths as of", as.character(Sys.Date()-1), "= ", format(us, big.mark = ",")) 
+   cat("\n")
+   cat("\n")
+   
+   new <- sum(filter(corona, date==Sys.Date()-1)$new_deaths) 
+   new_ex_china <- sum(filter(corona, date==Sys.Date()-1 & country_region!="China")$new_deaths)
+   new_us <- sum(filter(corona, date==Sys.Date()-1 & country_region=="US")$new_deaths)
+   cat("New Worldwide Deaths on", as.character(Sys.Date()-1), "= ", format(new, big.mark = ",")) 
+   cat("\n")
+   cat("New Worldwide Cases (excl China) on", as.character(Sys.Date()-1), "= ", format(new_ex_china, big.mark = ",")) 
+   cat("\n")
+   cat("New US Deaths on", as.character(Sys.Date()-1), "= ", format(new_us, big.mark = ",")) 
+   cat("\n")
+   cat("Check new death calculations: ", sum(corona$new_deaths)==total)
+}
 
-  
+check()
 
