@@ -19,8 +19,8 @@ charts <- function(country_region_filter=NULL, province_state_filter=NULL, min_d
       dd <- group_by(df, country_region, province_state, date) %>% 
              summarise_at(vars(new_confirmed_cases, new_deaths, new_recoveries, confirmed_cases, cumulative_cases, cumulative_deaths), funs(sum)) %>% 
              group_by(country_region, province_state) %>%
-             mutate(new_case_growth_rate=new_confirmed_cases/lag(new_confirmed_cases)-1, 
-                    new_deaths_growth_rate=new_deaths/lag(new_deaths)-1) %>%
+             mutate(case_growth_rate=new_confirmed_cases/lag(cumulative_cases), 
+                    death_growth_rate=new_deaths/lag(cumulative_deaths)) %>%
         filter(date >= as.Date(min_date))
 
      g1<- ggplot(dd, aes(x=date, y=new_confirmed_cases)) + 
@@ -31,21 +31,21 @@ charts <- function(country_region_filter=NULL, province_state_filter=NULL, min_d
       xlab("Date") + ylab("New Confirmed Cases") + 
       geom_text(aes(label=prettyNum(new_confirmed_cases, big.mark=",")), position=position_dodge(width=0.9), vjust=-0.25, size=3) 
 
-    g2 <- ggplot(dd, aes(x=date, y=new_case_growth_rate)) + 
+    g2 <- ggplot(dd, aes(x=date, y=case_growth_rate)) + 
       geom_bar(stat="identity") + 
       scale_x_date(date_breaks = "1 day") + 
       theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
       scale_y_continuous(labels = scales::percent) +
-      xlab("Date") + ylab("New Confirmed Case Growth Rate") + 
-      geom_text(aes(label=paste0(round(new_case_growth_rate*100,1), "%")), position=position_dodge(width=0.9), vjust=-0.25, size=3)
+      xlab("Date") + ylab("Confirmed Case Growth Rate") + 
+      geom_text(aes(label=paste0(round(case_growth_rate*100,1), "%")), position=position_dodge(width=0.9), vjust=-0.25, size=3)
 
-    g3 <- ggplot(dd, aes(x=date, y=new_deaths_growth_rate)) + 
+    g3 <- ggplot(dd, aes(x=date, y=death_growth_rate)) + 
       geom_bar(stat="identity") + 
       scale_x_date(date_breaks = "1 day") + 
       theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
       scale_y_continuous(labels = scales::percent) +
-      xlab("Date") + ylab("New Confirmed Deaths Growth Rate") +
-      geom_text(aes(label=paste0(round(new_deaths_growth_rate*100,1), "%")), position=position_dodge(width=0.9), vjust=-0.25, size=3)
+      xlab("Date") + ylab("Confirmed Deaths Growth Rate") +
+      geom_text(aes(label=paste0(round(death_growth_rate*100,1), "%")), position=position_dodge(width=0.9), vjust=-0.25, size=3)
     
    g4 <- ggplot(dd, aes(x=date, y=new_deaths)) + 
       geom_bar(stat="identity") + 
