@@ -7,12 +7,12 @@ source("functions.R")
 
 
 d <- readRDS("corona_country_cohorts.rda") %>%
-  filter(!(country_region %in% c("China", "Singapore", "Iran", "United Kingdom", "Japan"))) %>%
+  filter(country_region %in% c("US", "Germany", "Italy", "Korea, South", "Spain", "France")) %>%
   filter(cohort_index_first_death>0)
 
-m1 <- ceiling(max(d$cumulative_deaths_scaled)/1000)*1000
+m1 <- ceiling(max(d$cumulative_deaths)/1000)*1000
 b1 <- seq(from=0, to=m1, by=1000)
-m2 <- ceiling(max(d$cumulative_cases_scaled)/10000)*10000
+m2 <- ceiling(max(d$cumulative_cases)/10000)*10000
 b2 <- seq(from=0, to=m2, by=5000)
 
 gd <- ggplot(data=d, aes(x=cohort_index_first_death,  y=cumulative_deaths, colour=country_region)) +
